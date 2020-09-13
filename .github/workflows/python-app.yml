@@ -25,6 +25,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install pipenv
         pipenv install
-    - name: Lint with flake8
+    - name: Run All Test
       run: |
         ./bin/operations/run_all_tests.sh
