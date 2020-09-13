@@ -1,0 +1,8 @@
+.venv/
+logs/*.log
+logs/*.log.*
+appcache/
+*.pyc
+test/htmlcov
+test/.coverage
+.mypy_cache/
