@@ -17,6 +17,7 @@ cd ${PROJECT_ROOT}
 
 
 # If exclusive control is required, please comment out the following
+mkdir -p "${LOCKS}"
 if ! ln -s $$ "${LOCKS}/${SELF}" > /dev/null 2>&1; then
     exit 1
 fi
