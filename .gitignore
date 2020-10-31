@@ -6,3 +6,4 @@ appcache/
 test/htmlcov
 test/.coverage
 .mypy_cache/
+Pipfile.lock
