@@ -11,3 +11,5 @@ TIMEOUT_DURATION="600"
 #######################################
 
 # write common setting
+
+export PIPENV_VERBOSITY=-1
