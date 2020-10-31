@@ -1,0 +1,4 @@
+# run operational commands
+05 09 * * * /path/to/bin/run_compress_for_log_files.sh
+
+# run application
