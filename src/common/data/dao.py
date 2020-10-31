@@ -18,7 +18,6 @@ class SomethingTable(Base):
                      nullable=False)
 
     some_value = Column("some_value",
-                         String(512),
-                         primary_key=False,
-                         nullable=False)
-
+                        String(512),
+                        primary_key=False,
+                        nullable=False)

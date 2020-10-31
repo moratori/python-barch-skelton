@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-import common.framework.logger as logger
-import common.framework.config as config
 import common.framework.application.baseapplication as appframe
 
 from logging import getLogger

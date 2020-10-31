@@ -14,11 +14,11 @@ from logging.handlers import TimedRotatingFileHandler
 import common.framework.config as config
 
 
-def setup_logger(module_name:str,
-                 file_path:str,
-                 loglevel:str,
-                 rotation_timing:str,
-                 bkcount:int) -> logging.Logger:
+def setup_logger(module_name: str,
+                 file_path: str,
+                 loglevel: str,
+                 rotation_timing: str,
+                 bkcount: int) -> logging.Logger:
 
     """
     logger を初期化し返却する

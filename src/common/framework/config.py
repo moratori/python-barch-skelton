@@ -9,17 +9,17 @@ from typing import List
 
 if __name__ != "__main__":
 
-    PROJECT_ROOT:str = \
+    PROJECT_ROOT: str = \
         os.path.dirname(os.path.abspath(os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "../../")))
 
-    APPCACHE:str = os.path.join(PROJECT_ROOT, "appcache")
-    LOGS_DIR:str = os.path.join(PROJECT_ROOT, "logs")
-    STATIC_DIR:str = os.path.join(PROJECT_ROOT, "static")
-    TEMPLATES_DIR:str = os.path.join(PROJECT_ROOT, "templates")
-    CONFIG_DIR:str = os.path.join(PROJECT_ROOT, "conf")
+    APPCACHE: str = os.path.join(PROJECT_ROOT, "appcache")
+    LOGS_DIR: str = os.path.join(PROJECT_ROOT, "logs")
+    STATIC_DIR: str = os.path.join(PROJECT_ROOT, "static")
+    TEMPLATES_DIR: str = os.path.join(PROJECT_ROOT, "templates")
+    CONFIG_DIR: str = os.path.join(PROJECT_ROOT, "conf")
 
-    DIRECTORIES:List[str] = [
+    DIRECTORIES: List[str] = [
         PROJECT_ROOT,
         APPCACHE,
         LOGS_DIR,

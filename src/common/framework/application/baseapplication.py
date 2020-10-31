@@ -66,7 +66,7 @@ class BaseApplication(object):
 
         self.__appcache = shelve.open(dbname, flag="c", writeback=False)
         self.__appcache_mutex = threading.BoundedSemaphore(value=1)
-    
+
     def set_cache(self, key, value):
         with self.__appcache_mutex:
             self.__appcache[key] = value
@@ -74,7 +74,7 @@ class BaseApplication(object):
     def del_cache(self, key):
         with self.__appcache_mutex:
             del self.__appcache[key]
-    
+
     def get_cache(self, key):
         return self.__appcache[key]
 
@@ -90,12 +90,13 @@ class BaseApplication(object):
                 result[key] = self._convert_config_type(value)
             return result
         else:
-            raise Exception("unknown config type: %s" %type(config))
+            raise Exception("unknown config type: %s" % type(config))
 
     def load_config(self):
         specific_config_basename = \
-            os.path.basename(self.script_name).replace(BaseApplication.SCRIPT_EXT,
-                                                       BaseApplication.CONF_EXT)
+            os.path.basename(self.script_name).\
+            replace(BaseApplication.SCRIPT_EXT,
+                    BaseApplication.CONF_EXT)
 
         general_conf = configparser.ConfigParser()
         specific_conf = configparser.ConfigParser()
@@ -161,21 +162,21 @@ class BaseApplication(object):
                 LOGGER.info("end teardown application")
             except Exception as ex:
                 LOGGER.warning("unexpected exception <%s> occurred" %
-                                    str(ex))
+                               str(ex))
             try:
                 LOGGER.info("start teardown resource")
                 self.teardown_resource()
                 LOGGER.info("end teardown resource")
             except Exception as ex:
                 LOGGER.warning("unexpected exception <%s> occurred" %
-                                    str(ex))
+                               str(ex))
             try:
                 LOGGER.info("start persistent app cache")
                 self.__appcache.close()
                 LOGGER.info("end persistent app cache")
             except Exception as ex:
                 LOGGER.warning("unexpected exception <%s> occurred" %
-                                    str(ex))
+                               str(ex))
             LOGGER.info("end cleanup")
 
         sys.exit(retcode)

@@ -28,11 +28,10 @@ class Application(appframe.BaseApplication):
         print("hello, world")
         for each in self.get_cache_keys():
             print(each)
-        print("fname: %s" %self.args.fname)
+        print("fname: %s" % self.args.fname)
 
 
 if __name__ == "__main__":
     app = Application()
     LOGGER = app.create_toplevel_logger()
     app.start()
-
