@@ -7,7 +7,9 @@ BIN="${PROJECT_ROOT}/bin"
 
 . ${BIN}/common.sh
 
-LOG_RETENTION_PERIOD=3
+LOG_GZIP_PERIOD=3
+LOG_REMOVE_PERIOD=120
 #######################################
 
-find ${LOGS} -type f -mtime +${LOG_RETENTION_PERIOD} -name '*.log.*' ! -name '*.gz' | xargs --no-run-if-empty gzip
+find ${LOGS} -type f -mtime +${LOG_GZIP_PERIOD} -name '*.log.*' ! -name '*.gz' | xargs --no-run-if-empty gzip
+find ${LOGS} -type f -mtime +${LOG_REMOVE_PERIOD} -name '*.gz' | xargs --no-run-if-empty rm
