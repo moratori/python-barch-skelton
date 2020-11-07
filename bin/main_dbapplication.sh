@@ -8,7 +8,7 @@ BIN="${PROJECT_ROOT}/bin"
 . ${BIN}/common.sh
 
 SELF="`basename $0`"
-TOPLEVEL="main_dbapplication.py"
+TOPLEVEL="`echo "${SELF}" | sed -e "s/\.sh$/.${TOPLEVEL_SCRIPT_EXT}/g"`"
 # overwrite timeout duration
 # TIMEOUT_DURATION="3600"
 #######################################

@@ -8,13 +8,12 @@ BIN="${PROJECT_ROOT}/bin"
 . ${BIN}/common.sh
 
 SELF="`basename $0`"
-TOPLEVEL="main_application.py"
+TOPLEVEL="`echo "${SELF}" | sed -e "s/\.sh$/.${TOPLEVEL_SCRIPT_EXT}/g"`"
 # overwrite timeout duration
 # TIMEOUT_DURATION="3600"
 #######################################
 
 cd ${PROJECT_ROOT}
-
 
 # If exclusive control is required, please comment out the following
 mkdir -p "${LOCKS}"
