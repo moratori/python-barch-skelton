@@ -1,9 +1,9 @@
 .venv/
+.mypy_cache/
+*.pyc
+Pipfile.lock
+appcache/
 logs/*.log
 logs/*.log.*
-appcache/
-*.pyc
 test/htmlcov
 test/.coverage
-.mypy_cache/
-Pipfile.lock
