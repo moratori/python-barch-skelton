@@ -39,7 +39,7 @@ class BaseApplication(metaclass=ABCMeta):
             self.validate_config()
             self.__toplevel_logger = None
             self.create_toplevel_logger()
-        except Exception as ex:
+        except Exception:
             print(traceback.format_exc(), file=sys.stderr)
             sys.exit(BaseApplication.RET_ABNORMAL_END)
 
