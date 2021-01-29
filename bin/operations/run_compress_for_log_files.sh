@@ -9,7 +9,10 @@ BIN="${PROJECT_ROOT}/bin"
 
 LOG_GZIP_PERIOD=3
 LOG_REMOVE_PERIOD=120
+ARCHIVE_TARGET_PATTERN="*.log.*"
+ARCHIVE_CMD="gzip"
+ARCHIVED_PATTERN="*.gz"
 #######################################
 
-find ${LOGS} -type f -mtime +${LOG_GZIP_PERIOD} -name '*.log.*' ! -name '*.gz' | xargs --no-run-if-empty gzip
-find ${LOGS} -type f -mtime +${LOG_REMOVE_PERIOD} -name '*.gz' | xargs --no-run-if-empty rm
+find ${LOGS} -type f -mtime +${LOG_GZIP_PERIOD} -name "${ARCHIVE_TARGET_PATTERN}" ! -name "${ARCHIVED_PATTERN}" | xargs --no-run-if-empty ${ARCHIVE_CMD}
+find ${LOGS} -type f -mtime +${LOG_REMOVE_PERIOD} -name "${ARCHIVED_PATTERN}" | xargs --no-run-if-empty rm
