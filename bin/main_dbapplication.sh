@@ -1,17 +1,21 @@
 #!/bin/bash
 
-#######################################
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 CURRENT=$(cd $(dirname $0) && pwd)
 PROJECT_ROOT="$(cd ${CURRENT%/}/.. && pwd)"
 BIN="${PROJECT_ROOT}/bin"
 
-. ${BIN}/common.sh
+. ${PROJECT_ROOT}/conf/shell/common.sh
 
 SELF="`basename $0`"
+SELF_CONF="${PROJECT_ROOT}/conf/shell/${SELF}"
+
+if [ -x "${SELF_CONF}" ]; then
+    . ${SELF_CONF}
+fi
+
 TOPLEVEL="`echo "${SELF}" | sed -e "s/\.sh$/.${TOPLEVEL_SCRIPT_EXT}/g"`"
-# overwrite timeout duration
-# TIMEOUT_DURATION="3600"
-#######################################
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 cd ${PROJECT_ROOT}
 
