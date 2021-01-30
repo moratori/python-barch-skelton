@@ -17,7 +17,8 @@ if __name__ != "__main__":
     LOGS_DIR: str = os.path.join(PROJECT_ROOT, "logs")
     STATIC_DIR: str = os.path.join(PROJECT_ROOT, "static")
     TEMPLATES_DIR: str = os.path.join(PROJECT_ROOT, "templates")
-    CONFIG_DIR: str = os.path.join(PROJECT_ROOT, "conf")
+    CONFIG_DIR: str = os.path.join(PROJECT_ROOT,
+                                   "application/conf")
 
     DIRECTORIES: List[str] = [
         PROJECT_ROOT,
