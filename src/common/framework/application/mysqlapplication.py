@@ -15,17 +15,17 @@ class MySQLApplication(appframe.BaseApplication):
         super().__init__(module_name, script_name)
 
     def validate_config(self):
-        self.cnfg.database.user
-        self.cnfg.database.passwd
-        self.cnfg.database.host
-        self.cnfg.database.dbname
+        self.conf.common.database.user
+        self.conf.common.database.passwd
+        self.conf.common.database.host
+        self.conf.common.database.dbname
 
     def setup_resource(self):
         database_specifier = 'mysql://%s:%s@%s/%s?charset=utf8' % (
-            self.cnfg.database.user,
-            self.cnfg.database.passwd,
-            self.cnfg.database.host,
-            self.cnfg.database.dbname
+            self.conf.common.database.user,
+            self.conf.common.database.passwd,
+            self.conf.common.database.host,
+            self.conf.common.database.dbname
         )
         self.dbengine = create_engine(database_specifier,
                                       encoding="utf-8",

@@ -23,7 +23,7 @@ class BaseApplication(metaclass=ABCMeta):
 
     SCRIPT_EXT = ".py"
     CONF_EXT = ".ini"
-    GENERAL_CONF_NAME = "general" + CONF_EXT
+    GENERAL_CONF_NAME = "common" + CONF_EXT
 
     RET_NORMAL_END = 0
     RET_KEY_INTERRUPTED_END = 1
@@ -105,19 +105,18 @@ class BaseApplication(metaclass=ABCMeta):
             replace(BaseApplication.SCRIPT_EXT,
                     BaseApplication.CONF_EXT)
 
-        general_conf = configparser.ConfigParser()
-        specific_conf = configparser.ConfigParser()
+        common_conf = configparser.ConfigParser()
+        self_conf = configparser.ConfigParser()
 
-        general_conf.read(os.path.join(config.CONFIG_DIR,
-                                       BaseApplication.GENERAL_CONF_NAME))
-        specific_conf.read(os.path.join(config.CONFIG_DIR,
-                                        specific_config_basename))
+        common_conf.read(os.path.join(config.CONFIG_DIR,
+                                      BaseApplication.GENERAL_CONF_NAME))
 
-        self.cnfg = namedtupled.map(self._convert_config_type(
-            general_conf._sections))
+        self_conf.read(os.path.join(config.CONFIG_DIR,
+                                    specific_config_basename))
 
-        self.cnfs = namedtupled.map(self._convert_config_type(
-            specific_conf._sections))
+        self.conf = namedtupled.map(dict(
+            common=self._convert_config_type(common_conf._sections),
+            self=self._convert_config_type(self_conf._sections)))
 
     def _prepare_config_dir(self):
         for directory in config.DIRECTORIES:
@@ -129,9 +128,9 @@ class BaseApplication(metaclass=ABCMeta):
             self.__toplevel_logger = \
                 logger.setup_logger(self.module_name,
                                     self.script_name,
-                                    self.cnfg.logging.loglevel,
-                                    self.cnfg.logging.rotation_timing,
-                                    self.cnfg.logging.backupcount)
+                                    self.conf.common.logging.loglevel,
+                                    self.conf.common.logging.rotation_timing,
+                                    self.conf.common.logging.backupcount)
         return self.__toplevel_logger
 
     def start(self, **args):
