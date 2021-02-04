@@ -7,7 +7,6 @@ docstring is here
 import argparse
 
 import common.framework.application.baseapplication as appframe
-import common.data.dao as dao
 
 global LOGGER
 
