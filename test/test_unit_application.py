@@ -19,5 +19,5 @@ class TestApplication(unittest.TestCase):
         pass
 
     def test_0(self):
-        self.assertTrue(True)
-
+        application = app.Application()
+        self.assertIsNotNone(application)
