@@ -4,6 +4,8 @@
 import common.framework.application.mysqlapplication as appframe
 import common.data.dao as dao
 
+global LOGGER
+
 
 class InitializeDatabase(appframe.MySQLApplication):
 
@@ -11,10 +13,10 @@ class InitializeDatabase(appframe.MySQLApplication):
         super().__init__(__name__, __file__)
 
     def validate_config(self):
-        pass
+        super().validate_config()
 
     def setup_resource(self):
-        pass
+        super().setup_resource()
 
     def setup_application(self):
         pass
@@ -30,4 +32,6 @@ class InitializeDatabase(appframe.MySQLApplication):
 
 
 if __name__ == "__main__":
-    InitializeDatabase().start()
+    dbapp = InitializeDatabase()
+    LOGGER = dbapp.create_toplevel_logger()
+    dbapp.start()
