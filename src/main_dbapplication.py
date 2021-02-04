@@ -16,14 +16,14 @@ class DBApplication(appframe.MySQLApplication):
         super().__init__(__name__, __file__)
 
     def validate_config(self):
-        pass
+        super().validate_config()
+
+    def setup_resource(self):
+        super().setup_resource()
 
     def get_something_record(self):
         ret = self.session.query(dao.SomethingTable)
         return ret
-
-    def setup_resource(self):
-        pass
 
     def setup_application(self):
         pass
