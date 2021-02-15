@@ -5,7 +5,7 @@ docstring is here
 """
 
 import common.framework.application.mysqlapplication as appframe
-import common.data.dao as dao
+import common.db.dao as dao
 
 global LOGGER
 
