@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import common.framework.application.baseapplication as appframe
+import common.db.table as table
 
 from logging import getLogger
 from sqlalchemy import create_engine
@@ -32,6 +33,8 @@ class PostgreSQLApplication(appframe.BaseApplication):
                                       echo=False)
 
         LOGGER.debug("create db engine completed")
+
+        table.Base.metadata.create_all(bind=self.dbengine)
 
         session = scoped_session(sessionmaker(autocommit=False,
                                               autoflush=False,
