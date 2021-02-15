@@ -36,13 +36,19 @@ class MySQLApplication(appframe.BaseApplication):
 
         table.Base.metadata.create_all(bind=self.dbengine)
 
-        session = scoped_session(sessionmaker(autocommit=False,
-                                              autoflush=False,
-                                              bind=self.dbengine))
+        # pass this object to child thread in order to make
+        # theread local session
+        self.thread_local_session_maker = \
+            scoped_session(sessionmaker(autocommit=False,
+                                        autoflush=False,
+                                        bind=self.dbengine))
 
         LOGGER.debug("create scoped session completed")
 
-        self.session = session
+        self.session = self.thread_local_session_maker()
+
+        LOGGER.debug("session created for current thread: %s" %
+                     self.session)
 
     def setup_application(self):
         pass
@@ -52,3 +58,4 @@ class MySQLApplication(appframe.BaseApplication):
 
     def teardown_resource(self):
         self.session.close()
+        self.dbengine.dispose()
