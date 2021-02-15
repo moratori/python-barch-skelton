@@ -8,7 +8,7 @@ LOGGER = getLogger(__name__)
 Base = declarative_base()
 
 
-class SomethingTable(Base):
+class SomethingTable(Base):  # type: ignore
 
     __tablename__ = "something_table"
 
