@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-from logging import getLogger
 from sqlalchemy import Column, String
 from sqlalchemy.ext.declarative import declarative_base
 
-LOGGER = getLogger(__name__)
 Base = declarative_base()
 
 
