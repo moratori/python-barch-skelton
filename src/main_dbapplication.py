@@ -5,7 +5,7 @@ docstring is here
 """
 
 import common.framework.application.mysqlapplication as appframe
-from common.db.table import SomethingTable
+from common.db.table import Something
 
 global LOGGER
 
@@ -22,7 +22,7 @@ class DBApplication(appframe.MySQLApplication):
         super().setup_resource()
 
     def get_something_record(self):
-        ret = self.session.query(SomethingTable).all()
+        ret = self.session.query(Something).all()
         return ret
 
     def setup_application(self):
