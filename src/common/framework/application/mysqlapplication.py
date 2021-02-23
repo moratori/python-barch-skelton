@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import common.framework.application.baseapplication as appframe
-import common.db.table as table
+import common.data.table as table
 
 from logging import getLogger
 from sqlalchemy import create_engine

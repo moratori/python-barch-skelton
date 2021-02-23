@@ -6,7 +6,7 @@ docstring is here
 
 from typing import Any, List
 import common.framework.application.mysqlapplication as appframe
-from common.db.table import Something
+from common.data.table import Something
 
 global LOGGER
 
