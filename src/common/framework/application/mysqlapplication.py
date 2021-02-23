@@ -12,16 +12,16 @@ LOGGER = getLogger(__name__)
 
 class MySQLApplication(appframe.BaseApplication):
 
-    def __init__(self, module_name, script_name):
+    def __init__(self, module_name: str, script_name: str) -> None:
         super().__init__(module_name, script_name)
 
-    def validate_config(self):
+    def validate_config(self) -> None:
         self.conf.common.mariadb.user
         self.conf.common.mariadb.passwd
         self.conf.common.mariadb.host
         self.conf.common.mariadb.dbname
 
-    def setup_resource(self):
+    def setup_resource(self) -> None:
         database_specifier = 'mysql://%s:%s@%s/%s?charset=utf8' % (
             self.conf.common.mariadb.user,
             self.conf.common.mariadb.passwd,
@@ -50,12 +50,12 @@ class MySQLApplication(appframe.BaseApplication):
         LOGGER.debug("session created for current thread: %s" %
                      self.session)
 
-    def setup_application(self):
+    def setup_application(self) -> None:
         pass
 
-    def teardown_application(self):
+    def teardown_application(self) -> None:
         pass
 
-    def teardown_resource(self):
+    def teardown_resource(self) -> None:
         self.session.close()
         self.dbengine.dispose()

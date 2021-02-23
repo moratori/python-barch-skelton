@@ -17,3 +17,6 @@ psycopg2 = "==2.8.6"
 
 [requires]
 python_version = "3.8"
+
+[scripts]
+type-check = "mypy ./src"

@@ -8,7 +8,9 @@ import configparser
 import namedtupled
 import sys
 import traceback
+import logging
 
+from typing import Any, Union, Optional
 from logging import getLogger
 from abc import ABCMeta, abstractmethod
 
@@ -29,66 +31,67 @@ class BaseApplication(metaclass=ABCMeta):
     RET_KEY_INTERRUPTED_END = 1
     RET_ABNORMAL_END = 100
 
-    def __init__(self, module_name, script_name):
+    def __init__(self, module_name: str, script_name: str) -> None:
         try:
-            self.module_name = module_name
-            self.script_name = script_name
+            self.module_name: str = module_name
+            self.script_name: str = script_name
+            self.__toplevel_logger: Optional[logging.Logger] = None
+
             self._prepare_config_dir()
             self.load_config()
             self._prepare_appcache()
             self.validate_config()
-            self.__toplevel_logger = None
             self.create_toplevel_logger()
         except Exception:
             print(traceback.format_exc(), file=sys.stderr)
             sys.exit(BaseApplication.RET_ABNORMAL_END)
 
     @abstractmethod
-    def validate_config(self):
+    def validate_config(self) -> None:
         pass
 
     @abstractmethod
-    def setup_resource(self):
+    def setup_resource(self) -> None:
         pass
 
     @abstractmethod
-    def setup_application(self):
+    def setup_application(self) -> None:
         pass
 
     @abstractmethod
-    def run_application(self, **args):
+    def run_application(self, **args: Any) -> Optional[int]:
         pass
 
     @abstractmethod
-    def teardown_application(self):
+    def teardown_application(self) -> None:
         pass
 
     @abstractmethod
-    def teardown_resource(self):
+    def teardown_resource(self) -> None:
         pass
 
-    def _prepare_appcache(self):
+    def _prepare_appcache(self) -> None:
         dbname = os.path.join(config.APPCACHE,
                               os.path.basename(self.script_name))
 
         self.__appcache = shelve.open(dbname, flag="c", writeback=False)
         self.__appcache_mutex = threading.BoundedSemaphore(value=1)
 
-    def set_cache(self, key, value):
+    def set_cache(self, key: str, value: Any) -> None:
         with self.__appcache_mutex:
             self.__appcache[key] = value
 
-    def del_cache(self, key):
+    def del_cache(self, key: str) -> None:
         with self.__appcache_mutex:
             del self.__appcache[key]
 
-    def get_cache(self, key):
+    def get_cache(self, key: str) -> None:
         return self.__appcache[key]
 
-    def get_cache_keys(self):
+    def get_cache_keys(self) -> Any:
         return self.__appcache.keys()
 
-    def _convert_config_type(self, config):
+    def _convert_config_type(self, config: Union[str, dict]) -> Any:
         if isinstance(config, str):
             return ast.literal_eval(config)
         elif isinstance(config, dict):
@@ -99,7 +102,7 @@ class BaseApplication(metaclass=ABCMeta):
         else:
             raise Exception("unknown config type: %s" % type(config))
 
-    def load_config(self):
+    def load_config(self) -> None:
         specific_config_basename = \
             os.path.basename(self.script_name).\
             replace(BaseApplication.SCRIPT_EXT,
@@ -114,16 +117,16 @@ class BaseApplication(metaclass=ABCMeta):
         self_conf.read(os.path.join(config.CONFIG_DIR,
                                     specific_config_basename))
 
-        self.conf = namedtupled.map(dict(
-            common=self._convert_config_type(common_conf._sections),
-            self=self._convert_config_type(self_conf._sections)))
+        com = self._convert_config_type(common_conf._sections)  # type: ignore
+        sel = self._convert_config_type(self_conf._sections)  # type: ignore
+        self.conf = namedtupled.map(dict(common=com, self=sel))
 
-    def _prepare_config_dir(self):
+    def _prepare_config_dir(self) -> None:
         for directory in config.DIRECTORIES:
             if not os.path.isdir(directory):
                 os.mkdir(directory)
 
-    def create_toplevel_logger(self):
+    def create_toplevel_logger(self) -> logging.Logger:
         if self.__toplevel_logger is None:
             self.__toplevel_logger = \
                 logger.setup_logger(self.module_name,
@@ -133,7 +136,7 @@ class BaseApplication(metaclass=ABCMeta):
                                     self.conf.common.logging.backupcount)
         return self.__toplevel_logger
 
-    def start(self, **args):
+    def start(self, **args: Any) -> None:
         retcode = BaseApplication.RET_NORMAL_END
         try:
             LOGGER.info("start application!")
@@ -151,7 +154,7 @@ class BaseApplication(metaclass=ABCMeta):
             LOGGER.info("end main routine")
 
             LOGGER.info("end application without unexpected error")
-            if (type(result) is int):
+            if (result is not None) and (type(result) is int):
                 retcode = result
         except KeyboardInterrupt:
             LOGGER.warn("keyboard interrupted")

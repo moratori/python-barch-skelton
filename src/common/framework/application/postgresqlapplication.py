@@ -12,16 +12,16 @@ LOGGER = getLogger(__name__)
 
 class PostgreSQLApplication(appframe.BaseApplication):
 
-    def __init__(self, module_name, script_name):
+    def __init__(self, module_name: str, script_name: str) -> None:
         super().__init__(module_name, script_name)
 
-    def validate_config(self):
+    def validate_config(self) -> None:
         self.conf.common.postgresql.user
         self.conf.common.postgresql.passwd
         self.conf.common.postgresql.host
         self.conf.common.postgresql.dbname
 
-    def setup_resource(self):
+    def setup_resource(self) -> None:
         database_specifier = \
             "postgresql+psycopg2://%s:%s@%s/%s" % (
                 self.conf.common.postgresql.user,
@@ -50,12 +50,12 @@ class PostgreSQLApplication(appframe.BaseApplication):
         LOGGER.debug("session created for current thread: %s" %
                      self.session)
 
-    def setup_application(self):
+    def setup_application(self) -> None:
         pass
 
-    def teardown_application(self):
+    def teardown_application(self) -> None:
         pass
 
-    def teardown_resource(self):
+    def teardown_resource(self) -> None:
         self.session.close()
         self.dbengine.dispose()
