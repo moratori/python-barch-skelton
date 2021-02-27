@@ -7,7 +7,7 @@ verify_ssl = true
 
 [packages]
 coverage = "==5.4"
-mypy = "==0.800"
+mypy = "==0.812"
 flake8 = "==3.8.4"
 coverage-badge = "==1.0.1"
 namedtupled = "==0.3.3"
