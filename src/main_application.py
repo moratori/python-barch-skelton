@@ -6,12 +6,12 @@ docstring is here
 
 import argparse
 from typing import Any
-import common.framework.application.baseapplication as appframe
+import common.framework.application.batchbaseapplication as appframe
 
 global LOGGER
 
 
-class Application(appframe.BaseApplication):
+class Application(appframe.BatchBaseApplication):
 
     def __init__(self) -> None:
         super().__init__(__name__, __file__)

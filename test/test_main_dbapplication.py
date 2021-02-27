@@ -5,24 +5,19 @@ import unittest
 sys.path.append(os.path.join(os.path.dirname(__file__), '../src'))
 
 import main_dbapplication as app
+from typing import Any
 
 
 class TestMainDBApplication(unittest.TestCase):
 
-    def __init__(self, *positional, **keyword):
+    def __init__(self, *positional: Any, **keyword: Any) -> None:
         unittest.TestCase.__init__(self, *positional, **keyword)
 
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test_0(self):
+    def test_0(self) -> None:
         application = app.DBApplication()
         self.assertIsNotNone(application)
 
-    def test_1(self):
+    def test_1(self) -> None:
         application = app.DBApplication()
         self.assertIsNotNone(application)
 

@@ -5,8 +5,9 @@ docstring is here
 """
 
 from typing import Any, List
-import common.framework.application.mysqlapplication as appframe
+import common.framework.application.dbapplication.mysqlapplication as appframe
 from common.data.table import Something
+from common.framework.dbsession import local_session
 
 global LOGGER
 
@@ -23,7 +24,10 @@ class DBApplication(appframe.MySQLApplication):
         super().setup_resource()
 
     def get_something_record(self) -> List[Any]:
-        ret = self.session.query(Something).all()
+        with local_session(self.thread_local_session_maker) as session:
+            ret = session.query(Something).all()
+        with local_session(self.thread_local_session_maker) as session:
+            ret = session.query(Something).all()
         return ret
 
     def setup_application(self) -> None:

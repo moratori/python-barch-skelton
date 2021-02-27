@@ -21,7 +21,7 @@ import common.framework.config as config
 LOGGER = getLogger(__name__)
 
 
-class BaseApplication(metaclass=ABCMeta):
+class BatchBaseApplication(metaclass=ABCMeta):
 
     SCRIPT_EXT = ".py"
     CONF_EXT = ".ini"
@@ -44,7 +44,7 @@ class BaseApplication(metaclass=ABCMeta):
             self.create_toplevel_logger()
         except Exception:
             print(traceback.format_exc(), file=sys.stderr)
-            sys.exit(BaseApplication.RET_ABNORMAL_END)
+            sys.exit(BatchBaseApplication.RET_ABNORMAL_END)
 
     @abstractmethod
     def validate_config(self) -> None:
@@ -105,14 +105,14 @@ class BaseApplication(metaclass=ABCMeta):
     def load_config(self) -> None:
         specific_config_basename = \
             os.path.basename(self.script_name).\
-            replace(BaseApplication.SCRIPT_EXT,
-                    BaseApplication.CONF_EXT)
+            replace(BatchBaseApplication.SCRIPT_EXT,
+                    BatchBaseApplication.CONF_EXT)
 
         common_conf = configparser.ConfigParser()
         self_conf = configparser.ConfigParser()
 
         common_conf.read(os.path.join(config.CONFIG_DIR,
-                                      BaseApplication.GENERAL_CONF_NAME))
+                                      BatchBaseApplication.GENERAL_CONF_NAME))
 
         self_conf.read(os.path.join(config.CONFIG_DIR,
                                     specific_config_basename))
@@ -137,7 +137,7 @@ class BaseApplication(metaclass=ABCMeta):
         return self.__toplevel_logger
 
     def start(self, **args: Any) -> None:
-        retcode = BaseApplication.RET_NORMAL_END
+        retcode = BatchBaseApplication.RET_NORMAL_END
         try:
             LOGGER.info("start application!")
 
@@ -158,11 +158,11 @@ class BaseApplication(metaclass=ABCMeta):
                 retcode = result
         except KeyboardInterrupt:
             LOGGER.warn("keyboard interrupted")
-            retcode = BaseApplication.RET_KEY_INTERRUPTED_END
+            retcode = BatchBaseApplication.RET_KEY_INTERRUPTED_END
         except Exception as ex:
             LOGGER.error("unexpected exception <%s> occurred" % (str(ex)))
             LOGGER.error(traceback.format_exc())
-            retcode = BaseApplication.RET_ABNORMAL_END
+            retcode = BatchBaseApplication.RET_ABNORMAL_END
         finally:
             LOGGER.info("start cleanup")
             try:
