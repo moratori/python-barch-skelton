@@ -1,11 +1,8 @@
-import sys
-import os
 import unittest
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../src'))
+import srcpath  # noqa
+from typing import Any
 
 import main_dbapplication as app
-from typing import Any
 
 
 class TestMainDBApplication(unittest.TestCase):

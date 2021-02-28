@@ -1,10 +1,7 @@
-import sys
-import os
 import unittest
-
-sys.path.append(os.path.join(os.path.dirname(__file__), '../src'))
-
+import srcpath  # noqa
 from typing import Any
+
 import main_application as app
 
 
