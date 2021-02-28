@@ -30,4 +30,3 @@ def local_session(session_maker: scoped_session,
         raise ex
     finally:
         thread_local_session.close()
-        return
