@@ -6,7 +6,8 @@ docstring is here
 
 from typing import Any, List
 import common.framework.application.dbapplication.mysqlapplication as appframe
-from common.data.table import Something
+from common.data.db.Something import Something
+
 from common.framework.dbsession import local_session
 
 global LOGGER
@@ -23,9 +24,7 @@ class DBApplication(appframe.MySQLApplication):
     def setup_resource(self) -> None:
         super().setup_resource()
 
-    def get_something_record(self) -> List[Any]:
-        with local_session(self.thread_local_session_maker) as session:
-            ret = session.query(Something).all()
+    def get_something_record(self) -> List[Something]:
         with local_session(self.thread_local_session_maker) as session:
             ret = session.query(Something).all()
         return ret
@@ -35,7 +34,9 @@ class DBApplication(appframe.MySQLApplication):
 
     def run_application(self, **args: Any) -> None:
         print("hello, world")
-        print(self.get_something_record())
+        for each in self.get_something_record():
+            print("id: %s" % each.some_id)
+            print("val: %s" % each.some_value)
 
     def teardown_application(self) -> None:
         pass

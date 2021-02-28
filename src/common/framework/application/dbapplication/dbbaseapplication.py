@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import common.framework.application.batchbaseapplication as appframe
-import common.data.table as table
 
 from abc import abstractmethod
 from logging import getLogger
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+import common.data.db.base
+from common.data.db import *  # noqa
 
 LOGGER = getLogger(__name__)
 
@@ -27,7 +28,8 @@ class DBBaseApplication(appframe.BatchBaseApplication):
 
         LOGGER.debug("db engine %s created" % str(self.dbengine))
 
-        table.Base.metadata.create_all(bind=self.dbengine)
+        common.data.db.base.DeclarativeBase.metadata.\
+            create_all(bind=self.dbengine)
 
         # pass this object to child thread in order to make
         # thread local session
