@@ -9,8 +9,9 @@ import namedtupled
 import sys
 import traceback
 import logging
+import timeout_decorator
 
-from typing import Any, Union, Optional
+from typing import Any, Union, Optional, Tuple
 from logging import getLogger
 from abc import ABCMeta, abstractmethod
 
@@ -30,6 +31,7 @@ class BatchBaseApplication(metaclass=ABCMeta):
     RET_NORMAL_END = 0
     RET_KEY_INTERRUPTED_END = 1
     RET_ABNORMAL_END = 100
+    RET_TIMEOUT_END = 200
 
     def __init__(self, module_name: str, script_name: str) -> None:
         try:
@@ -136,8 +138,37 @@ class BatchBaseApplication(metaclass=ABCMeta):
                                     self.conf.common.logging.backupcount)
         return self.__toplevel_logger
 
+    def _get_timeout_duration(self) -> Tuple[bool, int]:
+        multithreaded = False
+        timeout_duration = -1
+
+        try:
+            multithreaded = self.conf.self.application.multithread_app
+        except Exception:
+            pass
+
+        try:
+            timeout_duration = self.conf.self.application.timeout_duration
+        except Exception:
+            try:
+                timeout_duration = \
+                    self.conf.common.application.timeout_duration
+            except Exception:
+                pass
+
+        return multithreaded, timeout_duration
+
     def start(self, **args: Any) -> None:
         retcode = BatchBaseApplication.RET_NORMAL_END
+        multithread, timeout_duration = self._get_timeout_duration()
+
+        if timeout_duration > -1:
+            func = timeout_decorator.\
+                timeout(timeout_duration,
+                        use_signals=not multithread)(self.run_application)
+        else:
+            func = self.run_application
+
         try:
             LOGGER.info("start application!")
 
@@ -150,7 +181,7 @@ class BatchBaseApplication(metaclass=ABCMeta):
             LOGGER.info("end application setup")
 
             LOGGER.info("start main routine")
-            result = self.run_application(**args)
+            result = func(**args)
             LOGGER.info("end main routine")
 
             LOGGER.info("end application without unexpected error")
@@ -159,6 +190,10 @@ class BatchBaseApplication(metaclass=ABCMeta):
         except KeyboardInterrupt:
             LOGGER.warn("keyboard interrupted")
             retcode = BatchBaseApplication.RET_KEY_INTERRUPTED_END
+        except timeout_decorator.TimeoutError:
+            LOGGER.warn("timeout exception occurred: %dsec" %
+                        (timeout_duration))
+            retcode = BatchBaseApplication.RET_TIMEOUT_END
         except Exception as ex:
             LOGGER.error("unexpected exception <%s> occurred" % (str(ex)))
             LOGGER.error(traceback.format_exc())
