@@ -1,34 +1,44 @@
 #!/bin/bash
 
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
 CURRENT=$(cd $(dirname $0) && pwd)
 PROJECT_ROOT="$(cd ${CURRENT%/}/.. && pwd)"
 BIN="${PROJECT_ROOT}/bin"
 
 . ${PROJECT_ROOT}/conf/shell/common.sh
 
-SELF="`basename $0`"
-SELF_CONF="${PROJECT_ROOT}/conf/shell/${SELF}"
-
-if [ -x "${SELF_CONF}" ]; then
-    . ${SELF_CONF}
-fi
-
-TOPLEVEL="`echo "${SELF}" | sed -e "s/\.sh$/.${TOPLEVEL_SCRIPT_EXT}/g"`"
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
-
-cd ${PROJECT_ROOT}
-
-# If exclusive control is required, please comment out the following
-mkdir -p "${LOCKS}"
-if ! ln -s $$ "${LOCKS}/${SELF}" > /dev/null 2>&1; then
+if [ $# -lt 1 ]; then
+    echo "specify executable main script name"
     exit 1
 fi
 
+EXEC_TARGET="`echo "${1}" | sed -e "s/.${TOPLEVEL_SCRIPT_EXT}$//g"`"
+TOPLEVEL="${EXEC_TARGET}.${TOPLEVEL_SCRIPT_EXT}"
+EXEC_TARGET_CONF="${PROJECT_ROOT}/conf/shell/${EXEC_TARGET}.sh"
+
+if [ -x "${EXEC_TARGET_CONF}" ]; then
+    . ${EXEC_TARGET_CONF}
+fi
+
+if [ ! -x "${SOURCES}/${TOPLEVEL}" ]; then
+    echo "specify executable main script name"
+    exit 1
+fi
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### 
+
+
+cd ${PROJECT_ROOT}
+
+mkdir -p "${LOCKS}"
+if ! ln -s $$ "${LOCKS}/${EXEC_TARGET}" > /dev/null 2>&1; then
+    echo "lockfile ${LOCKS}/${EXEC_TARGET} found"
+    exit 1
+fi
+
+shift
 pipenv run ${SOURCES}/${TOPLEVEL} $@
 return_code=$?
 
-# If exclusive control is required, please comment out the following
-rm "${LOCKS}/${SELF}"
+rm "${LOCKS}/${EXEC_TARGET}"
 
 exit ${return_code}
