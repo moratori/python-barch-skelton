@@ -170,21 +170,21 @@ class BatchBaseApplication(metaclass=ABCMeta):
             func = self.run_application
 
         try:
-            LOGGER.info("start application!")
+            LOGGER.info("start application")
 
-            LOGGER.info("start setup resource")
+            LOGGER.debug("start setup resource")
             self.setup_resource()
-            LOGGER.info("end setup resource")
+            LOGGER.debug("end setup resource")
 
-            LOGGER.info("start application setup")
+            LOGGER.debug("start application setup")
             self.setup_application()
-            LOGGER.info("end application setup")
+            LOGGER.debug("end application setup")
 
             LOGGER.info("start main routine")
             result = func(**args)
             LOGGER.info("end main routine")
 
-            LOGGER.info("end application without unexpected error")
+            LOGGER.info("end application successfully")
             if (result is not None) and (type(result) is int):
                 retcode = result
         except KeyboardInterrupt:
@@ -199,28 +199,31 @@ class BatchBaseApplication(metaclass=ABCMeta):
             LOGGER.error(traceback.format_exc())
             retcode = BatchBaseApplication.RET_ABNORMAL_END
         finally:
-            LOGGER.info("start cleanup")
+            LOGGER.debug("start cleanup")
             try:
-                LOGGER.info("start teardown application")
+                LOGGER.debug("start teardown application")
                 self.teardown_application()
-                LOGGER.info("end teardown application")
+                LOGGER.debug("end teardown application")
             except Exception as ex:
-                LOGGER.warning("unexpected exception <%s> occurred" %
-                               str(ex))
+                LOGGER.warning(
+                    "exception <%s> occurred while teardown application" %
+                    str(ex))
             try:
-                LOGGER.info("start teardown resource")
+                LOGGER.debug("start teardown resource")
                 self.teardown_resource()
-                LOGGER.info("end teardown resource")
+                LOGGER.debug("end teardown resource")
             except Exception as ex:
-                LOGGER.warning("unexpected exception <%s> occurred" %
-                               str(ex))
+                LOGGER.warning(
+                    "exception <%s> occurred while teardown resource" %
+                    str(ex))
             try:
-                LOGGER.info("start persistent app cache")
+                LOGGER.debug("start persistent app cache")
                 self.__appcache.close()
-                LOGGER.info("end persistent app cache")
+                LOGGER.debug("end persistent app cache")
             except Exception as ex:
-                LOGGER.warning("unexpected exception <%s> occurred" %
-                               str(ex))
-            LOGGER.info("end cleanup")
+                LOGGER.warning(
+                    "exception <%s> occurred while persistent app cache" %
+                    str(ex))
+            LOGGER.debug("end cleanup")
 
         sys.exit(retcode)
