@@ -19,6 +19,7 @@ def local_session(session_maker: scoped_session,
                  (str(thread_local_session)))
 
     try:
+        thread_local_session.rollback()
         yield thread_local_session
         if commit_on_exit:
             thread_local_session.commit()
