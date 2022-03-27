@@ -1,25 +1,31 @@
 #!/usr/bin/env python
 
 import ast
+import configparser
+import logging
 import os
 import shelve
-import threading
-import configparser
-import namedtupled
 import sys
+import threading
 import traceback
-import logging
+from abc import ABCMeta, abstractmethod
+from enum import IntEnum
+from logging import getLogger
+from typing import Any, Optional, Tuple, Union
+
+import common.framework.config as config
+import common.framework.logger as logger
+import namedtupled
 import timeout_decorator
 
-from typing import Any, Union, Optional, Tuple
-from logging import getLogger
-from abc import ABCMeta, abstractmethod
-
-import common.framework.logger as logger
-import common.framework.config as config
-
-
 LOGGER = getLogger(__name__)
+
+
+class ExitCode(IntEnum):
+    NORMAL = 0
+    KEY_INTERRUPTED = 1
+    TIMEOUT = 2
+    ABEND = 127
 
 
 class BatchBaseApplication(metaclass=ABCMeta):
@@ -28,16 +34,12 @@ class BatchBaseApplication(metaclass=ABCMeta):
     CONF_EXT = ".ini"
     GENERAL_CONF_NAME = "common" + CONF_EXT
 
-    RET_NORMAL_END = 0
-    RET_KEY_INTERRUPTED_END = 1
-    RET_ABNORMAL_END = 100
-    RET_TIMEOUT_END = 200
-
     def __init__(self, module_name: str, script_name: str) -> None:
         try:
             self.module_name: str = module_name
             self.script_name: str = script_name
             self.__toplevel_logger: Optional[logging.Logger] = None
+            self.set_exit_code(ExitCode.NORMAL)
 
             self._prepare_config_dir()
             self.load_config()
@@ -46,30 +48,45 @@ class BatchBaseApplication(metaclass=ABCMeta):
             self.create_toplevel_logger()
         except Exception:
             print(traceback.format_exc(), file=sys.stderr)
-            sys.exit(BatchBaseApplication.RET_ABNORMAL_END)
+            sys.exit(ExitCode.ABEND.value)
 
-    @abstractmethod
+    def set_exit_code(self, code: ExitCode) -> None:
+        """終了コードを設定します
+
+        Args:
+            code (ExitCode): 終了コードを示すenum
+        """
+        self.__return_code = code
+
     def validate_config(self) -> None:
+        """コンフィグの内容を検証します
+        """
         pass
 
-    @abstractmethod
     def setup_resource(self) -> None:
+        """リソースの設定を行います
+        """
         pass
 
-    @abstractmethod
     def setup_application(self) -> None:
+        """アプリケーションロジックの実行に必要な前準備を行います
+        """
         pass
 
     @abstractmethod
-    def run_application(self, **args: Any) -> Optional[int]:
+    def run_application(self) -> None:
+        """アプリケーションロジックのエントリポイントです
+        """
         pass
 
-    @abstractmethod
     def teardown_application(self) -> None:
+        """アプリケーションロジックの終了に必要な処理を行います
+        """
         pass
 
-    @abstractmethod
     def teardown_resource(self) -> None:
+        """リソースの解放を行います
+        """
         pass
 
     def _prepare_appcache(self) -> None:
@@ -158,8 +175,7 @@ class BatchBaseApplication(metaclass=ABCMeta):
 
         return multithreaded, timeout_duration
 
-    def start(self, **args: Any) -> None:
-        retcode = BatchBaseApplication.RET_NORMAL_END
+    def start(self) -> None:
         multithread, timeout_duration = self._get_timeout_duration()
 
         if timeout_duration > -1:
@@ -181,23 +197,21 @@ class BatchBaseApplication(metaclass=ABCMeta):
             LOGGER.debug("end application setup")
 
             LOGGER.info("start main routine")
-            result = func(**args)
+            func()
             LOGGER.info("end main routine")
 
             LOGGER.info("end application successfully")
-            if (result is not None) and (type(result) is int):
-                retcode = result
         except KeyboardInterrupt:
             LOGGER.warn("keyboard interrupted")
-            retcode = BatchBaseApplication.RET_KEY_INTERRUPTED_END
+            self.set_exit_code(ExitCode.KEY_INTERRUPTED)
         except timeout_decorator.TimeoutError:
             LOGGER.warn("timeout exception occurred: %dsec" %
                         (timeout_duration))
-            retcode = BatchBaseApplication.RET_TIMEOUT_END
+            self.set_exit_code(ExitCode.TIMEOUT)
         except Exception as ex:
             LOGGER.error("unexpected exception <%s> occurred" % (str(ex)))
             LOGGER.error(traceback.format_exc())
-            retcode = BatchBaseApplication.RET_ABNORMAL_END
+            self.set_exit_code(ExitCode.ABEND)
         finally:
             LOGGER.debug("start cleanup")
             try:
@@ -226,4 +240,4 @@ class BatchBaseApplication(metaclass=ABCMeta):
                     str(ex))
             LOGGER.debug("end cleanup")
 
-        sys.exit(retcode)
+        sys.exit(self.__return_code.value)

@@ -68,23 +68,8 @@ class Application(appframe.BatchBaseApplication):
     def __init__(self) -> None:
         super().__init__(__name__, __file__)
 
-    def validate_config(self) -> None:
-        pass
-
-    def setup_resource(self) -> None:
-        pass
-
-    def setup_application(self) -> None:
-        pass
-
-    def run_application(self, **args: Any) -> None:
+    def run_application(self) -> None:
         print("hello, world")
-
-    def teardown_application(self) -> None:
-        pass
-
-    def teardown_resource(self) -> None:
-        pass
 
 
 if __name__ == "__main__":
@@ -93,13 +78,8 @@ if __name__ == "__main__":
     app.start()
 ```
 
-以下6つのメソッドを実装する必要があります。
-* validate_config
-* setup_resource
-* setup_application
+最低以下のメソッドを実装する必要があります。
 * run_application
-* teardown_application
-* teardown_resource
 
 `run_application`メソッドにメインの処理を実装します。
 `start`メソッドを呼ぶことで、処理を実行することができます。
@@ -123,9 +103,8 @@ hello, world
 読み込んだコンフィグの内容は次の形で参照します。
 
 ```
-    def validate_config(self) -> None:
-        self.conf.common.logging.loglevel
-        self.conf.self.application.timeout_duration
+self.conf.common.logging.loglevel
+self.conf.self.application.timeout_duration
 ```
 
 ### 3.4 ロギング

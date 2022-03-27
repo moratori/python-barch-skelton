@@ -4,16 +4,16 @@
 docstring is here
 """
 
-from typing import Any, List
-import common.framework.application.dbapplication.mysqlapplication as appframe
-from common.data.db.Something import Something
+from typing import List
 
+import common.framework.application.dbapplication.mysqlapplication as fw
+from common.data.db.Something import Something
 from common.framework.dbsession import local_session
 
 global LOGGER
 
 
-class DBApplication(appframe.MySQLApplication):
+class DBApplication(fw.MySQLApplication):
 
     def __init__(self) -> None:
         super().__init__(__name__, __file__)
@@ -29,20 +29,14 @@ class DBApplication(appframe.MySQLApplication):
             ret = session.query(Something).all()
         return ret
 
-    def setup_application(self) -> None:
-        pass
-
-    def run_application(self, **args: Any) -> None:
+    def run_application(self) -> None:
         print("hello, world")
         for each in self.get_something_record():
             print("id: %s" % each.some_id)
             print("val: %s" % each.some_value)
 
-    def teardown_application(self) -> None:
-        pass
-
     def teardown_resource(self) -> None:
-        pass
+        super().teardown_resource()
 
 
 if __name__ == "__main__":
