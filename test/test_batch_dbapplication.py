@@ -2,7 +2,7 @@ import unittest
 import srcpath  # noqa
 from typing import Any
 
-import main_dbapplication as app
+import batch_dbapplication as app
 
 
 class TestMainDBApplication(unittest.TestCase):

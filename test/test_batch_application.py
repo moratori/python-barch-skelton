@@ -2,7 +2,7 @@ import unittest
 import srcpath  # noqa
 from typing import Any
 
-import main_application as app
+import batch_application as app
 
 
 class TestApplication(unittest.TestCase):
