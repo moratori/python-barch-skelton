@@ -104,7 +104,7 @@ class BatchBaseApplication(metaclass=ABCMeta):
         with self.__appcache_mutex:
             del self.__appcache[key]
 
-    def get_cache(self, key: str) -> None:
+    def get_cache(self, key: str) -> Any:
         return self.__appcache[key]
 
     def get_cache_keys(self) -> Any:
